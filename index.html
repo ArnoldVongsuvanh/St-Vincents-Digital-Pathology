@@ -479,42 +479,51 @@ body {
 }
 .impl-cost-table th {
   background: var(--navy); color: white;
-  padding: 12px 16px; text-align: left;
-  font-size: 11px; font-weight: 600; letter-spacing: 0.8px;
-  text-transform: uppercase;
+  padding: 11px 13px; text-align: left;
+  font-size: 10.5px; font-weight: 600; letter-spacing: 0.7px;
+  text-transform: uppercase; vertical-align: bottom;
 }
 .impl-cost-table td {
-  padding: 13px 16px; font-size: 13px; color: var(--text);
+  padding: 12px 13px; font-size: 12.5px; color: var(--text);
   border-bottom: 1px solid var(--border);
   vertical-align: middle; background: white;
 }
 .impl-cost-table tr:hover td { background: var(--offwhite); }
 .impl-cost-table .range-col {
-  font-family: 'DM Mono', monospace; font-size: 12.5px;
+  font-family: 'DM Mono', monospace; font-size: 12px;
   color: var(--navy-mid); white-space: nowrap;
 }
 .impl-cost-table .src-col {
-  font-size: 11.5px; color: var(--text-muted); line-height: 1.5;
+  font-size: 11px; color: var(--text-muted); line-height: 1.4;
 }
 .impl-cost-table .input-col {
-  font-family: 'DM Mono', monospace; font-size: 13px;
-  color: var(--teal); font-weight: 500; white-space: nowrap;
+  font-family: 'DM Mono', monospace; font-size: 12.5px;
+  color: var(--teal); font-weight: 600; white-space: nowrap;
 }
+.impl-cost-table .input-col-h { color: var(--teal-bright); }
+.impl-cost-table .est-range-col {
+  font-family: 'DM Mono', monospace; font-size: 11px;
+  color: var(--slate); white-space: nowrap; line-height: 1.5;
+}
+.impl-cost-table .est-range-col-h { color: #a8c4cc; }
+.impl-cost-table .contingency-col {
+  font-family: 'DM Mono', monospace; font-size: 12.5px;
+  color: #8a5c00; font-weight: 600; white-space: nowrap;
+  background: var(--amber-pale) !important;
+}
+.impl-cost-table .contingency-col-h { color: #f4c842; }
 .impl-cost-table .total-row td {
-  background: var(--navy-mid); color: white;
-  border-bottom: none;
-  font-weight: 600;
+  background: var(--navy-mid) !important; color: white;
+  border-bottom: none; font-weight: 600;
 }
-.impl-cost-table .total-row .range-col {
-  color: var(--teal-bright);
-}
-.impl-cost-table .total-row .input-col {
-  color: var(--teal-bright); font-size: 14px;
+.impl-cost-table .total-row .range-col { color: var(--teal-bright); }
+.impl-cost-table .total-row .input-col { color: var(--teal-bright); }
+.impl-cost-table .total-row .contingency-col {
+  background: var(--navy) !important;
 }
 .impl-cost-table .breakeven-row td {
-  background: linear-gradient(135deg, var(--navy) 0%, #0e3d4d 100%);
-  color: white; border-bottom: none;
-  font-size: 13px;
+  background: linear-gradient(135deg, var(--navy) 0%, #0e3d4d 100%) !important;
+  color: white; border-bottom: none; font-size: 13px;
 }
 
 /* =====================================================
@@ -619,6 +628,7 @@ body {
   .vendor-table, .impl-cost-table { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; white-space: nowrap; }
   .vendor-table th, .vendor-table td { font-size: 11.5px; padding: 8px 10px; }
   .impl-cost-table th, .impl-cost-table td { font-size: 11.5px; padding: 8px 10px; }
+  .impl-cost-table .src-col { display: none; }
 
   /* Modal full screen on phones */
   .modal-overlay { padding: 0; align-items: flex-end; }
@@ -1474,73 +1484,94 @@ body {
     <!-- IMPLEMENTATION COST BREAKDOWN TABLE — always visible, updates from inputs -->
     <div style="margin-top:32px">
       <h3 style="font-family:'Playfair Display',serif;font-size:20px;margin-bottom:6px;color:var(--navy)">SydPath Implementation Cost Breakdown</h3>
-      <p style="font-size:13px;color:var(--text-muted);margin-bottom:16px">Based on published literature ranges. The <em>Your Input</em> column reflects the values you entered above. Break-even updates after you click Calculate.</p>
+      <p style="font-size:13px;color:var(--text-muted);margin-bottom:16px">
+        Based on published literature ranges. <strong>Your Estimate</strong> splits your total implementation input proportionally across components using literature midpoint weightings (scanners 34%, IMS 20%, storage 18%, network 8%, workstations 10%, LIS integration 6%, project mgmt 4%). <strong>Estimate Range</strong> shows the low–high band for each component. <strong>+20% Contingency</strong> adds a standard NSW Health capital IT project buffer. Break-even updates after you click Calculate.
+      </p>
       <table class="impl-cost-table">
         <thead>
           <tr>
             <th>Component</th>
-            <th>Literature Range (AUD)</th>
-            <th>Source</th>
-            <th>Your Input / Estimate</th>
+            <th class="src-col">Source</th>
+            <th class="range-col">Literature Range (AUD)</th>
+            <th class="input-col-h">Your Estimate</th>
+            <th class="est-range-col-h">Estimate Range</th>
+            <th class="contingency-col-h">+20% Contingency</th>
           </tr>
         </thead>
         <tbody>
           <tr>
             <td>2–3 high-throughput scanners</td>
+            <td class="src-col">DigiPatICS; Leica/Aperio; 3DHISTECH</td>
             <td class="range-col">$300,000 – $600,000</td>
-            <td class="src-col">DigiPatICS; Leica/Aperio pricing; 3DHISTECH</td>
             <td class="input-col" id="impl-row-scanners">—</td>
+            <td class="est-range-col" id="impl-range-scanners">—</td>
+            <td class="contingency-col" id="impl-cont-scanners">—</td>
           </tr>
           <tr>
             <td>IMS / PACS platform (5-yr licence)</td>
+            <td class="src-col">Sectra, Fujifilm Synapse, 3DHISTECH</td>
             <td class="range-col">$150,000 – $400,000</td>
-            <td class="src-col">Sectra, Fujifilm Synapse, 3DHISTECH ClinicalViewer</td>
             <td class="input-col" id="impl-row-ims">—</td>
+            <td class="est-range-col" id="impl-range-ims">—</td>
+            <td class="contingency-col" id="impl-cont-ims">—</td>
           </tr>
           <tr>
             <td>Storage infrastructure (initial)</td>
+            <td class="src-col">DigiPatICS; Montezuma 2022</td>
             <td class="range-col">$150,000 – $400,000</td>
-            <td class="src-col">DigiPatICS (~500TB across 8 hospitals); Montezuma 2022</td>
             <td class="input-col" id="impl-row-storage">—</td>
+            <td class="est-range-col" id="impl-range-storage">—</td>
+            <td class="contingency-col" id="impl-cont-storage">—</td>
           </tr>
           <tr>
             <td>Network upgrades (LAN/WAN)</td>
+            <td class="src-col">DigiPatICS; Bruce 2024</td>
             <td class="range-col">$50,000 – $200,000</td>
-            <td class="src-col">DigiPatICS (10 Gbps scanner-to-DPC; 1 Gbps workstations)</td>
             <td class="input-col" id="impl-row-network">—</td>
+            <td class="est-range-col" id="impl-range-network">—</td>
+            <td class="contingency-col" id="impl-cont-network">—</td>
           </tr>
           <tr>
             <td>Pathologist workstations &amp; monitors</td>
+            <td class="src-col">DigiPatICS (183 ws, 286 LG 32" 4K); Bruce 2024</td>
             <td class="range-col">$145,000 – $325,000</td>
-            <td class="src-col">DigiPatICS (183 workstations, 286 LG 32" 4K monitors); Bruce 2024</td>
             <td class="input-col" id="impl-row-ws">—</td>
+            <td class="est-range-col" id="impl-range-ws">—</td>
+            <td class="contingency-col" id="impl-cont-ws">—</td>
           </tr>
           <tr>
             <td>PowerPath–IMS integration (HL7)</td>
-            <td class="range-col">$50,000 – $200,000</td>
             <td class="src-col">Montezuma 2022 (5–6 months build); Hanna 2019</td>
+            <td class="range-col">$50,000 – $200,000</td>
             <td class="input-col" id="impl-row-lis">—</td>
+            <td class="est-range-col" id="impl-range-lis">—</td>
+            <td class="contingency-col" id="impl-cont-lis">—</td>
           </tr>
           <tr>
             <td>Implementation, training &amp; project mgmt</td>
-            <td class="range-col">$80,000 – $200,000</td>
             <td class="src-col">Sectra Business Case 2020; Daniel 2025</td>
+            <td class="range-col">$80,000 – $200,000</td>
             <td class="input-col" id="impl-row-pm">—</td>
+            <td class="est-range-col" id="impl-range-pm">—</td>
+            <td class="contingency-col" id="impl-cont-pm">—</td>
           </tr>
           <tr class="total-row">
             <td><strong>Total estimated implementation</strong></td>
+            <td class="src-col" style="color:rgba(255,255,255,0.6);font-size:11px">Synthesis — all 8 published studies</td>
             <td class="range-col"><strong>$925,000 – $2,325,000</strong></td>
-            <td class="src-col">Synthesis across all 8 published studies</td>
-            <td class="input-col" id="impl-row-total">Enter your impl. cost above →</td>
+            <td class="input-col" id="impl-row-total" style="font-size:14px">Enter impl. cost above →</td>
+            <td class="est-range-col" id="impl-range-total" style="font-size:13px;color:var(--teal-bright)">—</td>
+            <td class="contingency-col" id="impl-cont-total" style="font-size:14px;color:#f4c842;font-weight:700">—</td>
           </tr>
           <tr class="breakeven-row">
-            <td colspan="2"><strong>📍 Estimated break-even point (from your inputs)</strong></td>
-            <td colspan="2" id="impl-row-breakeven" style="font-family:'DM Mono',monospace;font-size:15px;font-weight:600;color:var(--teal);padding:14px 16px">Click "Calculate 5-Year ROI" above to see your break-even</td>
+            <td colspan="2"><strong>📍 Estimated break-even (from your inputs)</strong></td>
+            <td colspan="4" id="impl-row-breakeven" style="font-family:'DM Mono',monospace;font-size:15px;font-weight:600;color:var(--teal);padding:14px 16px">Click "Calculate 5-Year ROI" above to see your break-even</td>
           </tr>
         </tbody>
       </table>
       <p style="font-size:11.5px;color:var(--text-muted);margin-top:10px;line-height:1.6">
-        <strong>Literature comparators:</strong> Timmins (CAD $150K, break-even Yr 1–2) · MSKCC (break-even ~Yr 7 phased, ~Yr 5 post clinical scanning) · UPMC ($17.7M projected 5-yr saving at 219K accessions/yr) · Sectra framework (break-even Yr 2 at Level-3 adoption). All AUD figures adjusted from published USD/CAD/EUR.
+        <strong>How the estimate range is calculated:</strong> Each component has a published low and high from the literature. Your estimate is the midpoint-weighted split. The range applies ±the proportional variance from the literature low/high for that component. The 20% contingency is standard for NSW Health capital IT projects and reflects integration complexity, scope changes, and vendor negotiation risk.
+        &nbsp;·&nbsp; <strong>Literature comparators:</strong> Timmins CAD $150K (break-even Yr 1–2) · MSKCC break-even ~Yr 5 post clinical scanning · Sectra framework break-even Yr 2 at Level-3 adoption.
       </p>
     </div>
 
@@ -2256,26 +2287,80 @@ function fmtAUD(n) {
   return 'AUD $' + Math.round(n).toLocaleString('en-AU');
 }
 
-// Proportional split of user's impl cost across components (based on literature midpoints)
-// Scanners 34%, IMS 20%, Storage 18%, Network 8%, Workstations 10%, LIS integration 6%, PM 4%
-const implSplits = {
-  scanners:  0.34,
-  ims:       0.20,
-  storage:   0.18,
-  network:   0.08,
-  ws:        0.10,
-  lis:       0.06,
-  pm:        0.04
-};
+// Proportional split of user's impl cost across components
+// mid = fraction of total used for "Your Estimate" column (midpoint-weighted)
+// litLow / litHigh = absolute literature low and high per component (AUD)
+// The estimate range is derived by applying the same proportion to ±variance
+const implComponents = [
+  { key: 'scanners', mid: 0.34, litLow: 300000, litHigh: 600000 },
+  { key: 'ims',      mid: 0.20, litLow: 150000, litHigh: 400000 },
+  { key: 'storage',  mid: 0.18, litLow: 150000, litHigh: 400000 },
+  { key: 'network',  mid: 0.08, litLow:  50000, litHigh: 200000 },
+  { key: 'ws',       mid: 0.10, litLow: 145000, litHigh: 325000 },
+  { key: 'lis',      mid: 0.06, litLow:  50000, litHigh: 200000 },
+  { key: 'pm',       mid: 0.04, litLow:  80000, litHigh: 200000 },
+];
+
+// Literature totals for scaling
+const litTotalLow  = implComponents.reduce((s,c) => s + c.litLow,  0);  // 925,000
+const litTotalHigh = implComponents.reduce((s,c) => s + c.litHigh, 0);  // 2,325,000
+
+function fmtAUDShort(n) {
+  if (n >= 1000000) return 'AUD $' + (n/1000000).toFixed(2) + 'M';
+  return 'AUD $' + Math.round(n).toLocaleString('en-AU');
+}
 
 function populateImplTable(implCost) {
-  const ids = ['scanners','ims','storage','network','ws','lis','pm'];
-  ids.forEach(k => {
-    const el = document.getElementById('impl-row-' + k);
-    if (el) el.textContent = fmtAUD(implCost * implSplits[k]);
+  if (!implCost || implCost <= 0) {
+    implComponents.forEach(c => {
+      const el = document.getElementById('impl-row-' + c.key);
+      const re = document.getElementById('impl-range-' + c.key);
+      const co = document.getElementById('impl-cont-' + c.key);
+      if (el) el.textContent = '—';
+      if (re) re.textContent = '—';
+      if (co) co.textContent = '—';
+    });
+    const tot = document.getElementById('impl-row-total');
+    const rng = document.getElementById('impl-range-total');
+    const cnt = document.getElementById('impl-cont-total');
+    if (tot) tot.textContent = 'Enter impl. cost above →';
+    if (rng) rng.textContent = '—';
+    if (cnt) cnt.textContent = '—';
+    return;
+  }
+
+  // Scale factor: where does the user's total sit relative to the lit range?
+  // We scale each component's low/high proportionally so they always sum to the right total
+  const scaleLow  = implCost / litTotalHigh;  // conservative: user's cost maps to lit-high spread
+  const scaleHigh = implCost / litTotalLow;   // optimistic:  user's cost maps to lit-low spread
+
+  let totalEst = 0, totalLow = 0, totalHigh = 0;
+
+  implComponents.forEach(c => {
+    const est  = implCost * c.mid;
+    const low  = c.litLow  * scaleLow;
+    const high = c.litHigh * scaleHigh;
+    const cont = est * 1.20;
+
+    totalEst  += est;
+    totalLow  += low;
+    totalHigh += high;
+
+    const elEst  = document.getElementById('impl-row-'   + c.key);
+    const elRng  = document.getElementById('impl-range-' + c.key);
+    const elCont = document.getElementById('impl-cont-'  + c.key);
+
+    if (elEst)  elEst.textContent  = fmtAUDShort(est);
+    if (elRng)  elRng.innerHTML    = fmtAUDShort(low) + '<br>– ' + fmtAUDShort(high);
+    if (elCont) elCont.textContent = fmtAUDShort(cont);
   });
-  const totalEl = document.getElementById('impl-row-total');
-  if (totalEl) totalEl.textContent = fmtAUD(implCost) + ' (your input)';
+
+  const tot = document.getElementById('impl-row-total');
+  const rng = document.getElementById('impl-range-total');
+  const cnt = document.getElementById('impl-cont-total');
+  if (tot) tot.textContent = fmtAUDShort(totalEst);
+  if (rng) rng.innerHTML   = fmtAUDShort(totalLow) + '<br>– ' + fmtAUDShort(totalHigh);
+  if (cnt) cnt.textContent = fmtAUDShort(totalEst * 1.20);
 }
 
 function calculateROI() {
